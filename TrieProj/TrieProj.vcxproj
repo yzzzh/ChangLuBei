@@ -139,18 +139,23 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="C:\Users\YZH\Documents\Tencent Files\453505647\FileRecv\CountingBloomFilter.h" />
-    <ClInclude Include="C:\Users\YZH\Documents\Tencent Files\453505647\FileRecv\Routerlist.h" />
-    <ClInclude Include="C:\Users\YZH\Documents\Tencent Files\453505647\FileRecv\TrieTree.h" />
+    <ClInclude Include="CountingBloomFilter.h" />
+    <ClInclude Include="DLeftCountingBloomFilter.h" />
+    <ClInclude Include="Routerlist.h" />
+    <ClInclude Include="TrieTree.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="C:\Users\YZH\Documents\Tencent Files\453505647\FileRecv\CountingBloomFilter.cpp" />
-    <ClCompile Include="C:\Users\YZH\Documents\Tencent Files\453505647\FileRecv\Test.cpp" />
-    <ClCompile Include="C:\Users\YZH\Documents\Tencent Files\453505647\FileRecv\TrieTree.cpp" />
+    <ClCompile Include="CountingBloomFilter.cpp" />
+    <ClCompile Include="DLeftCountingBloomFilter.cpp" />
+    <ClCompile Include="Test.cpp" />
+    <ClCompile Include="TrieTree.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="c:\Users\YZH\Documents\Tencent Files\453505647\FileRecv\data.txt" />
-    <Text Include="C:\Users\YZH\Documents\Tencent Files\453505647\FileRecv\testdata.txt" />
+    <Text Include="data.txt" />
+    <Text Include="diffdata.txt" />
+    <Text Include="ipdata.txt" />
+    <Text Include="ipdiffdata.txt" />
+    <Text Include="resultdata.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

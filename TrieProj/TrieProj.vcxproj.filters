@@ -15,32 +15,47 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="C:\Users\YZH\Documents\Tencent Files\453505647\FileRecv\Routerlist.h">
+    <ClInclude Include="Routerlist.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\YZH\Documents\Tencent Files\453505647\FileRecv\TrieTree.h">
+    <ClInclude Include="TrieTree.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\YZH\Documents\Tencent Files\453505647\FileRecv\CountingBloomFilter.h">
+    <ClInclude Include="DLeftCountingBloomFilter.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CountingBloomFilter.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="C:\Users\YZH\Documents\Tencent Files\453505647\FileRecv\TrieTree.cpp">
+    <ClCompile Include="TrieTree.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\YZH\Documents\Tencent Files\453505647\FileRecv\CountingBloomFilter.cpp">
+    <ClCompile Include="Test.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\YZH\Documents\Tencent Files\453505647\FileRecv\Test.cpp">
+    <ClCompile Include="DLeftCountingBloomFilter.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="CountingBloomFilter.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="c:\Users\YZH\Documents\Tencent Files\453505647\FileRecv\data.txt">
+    <Text Include="data.txt">
       <Filter>资源文件</Filter>
     </Text>
-    <Text Include="C:\Users\YZH\Documents\Tencent Files\453505647\FileRecv\testdata.txt">
+    <Text Include="diffdata.txt">
+      <Filter>资源文件</Filter>
+    </Text>
+    <Text Include="resultdata.txt">
+      <Filter>资源文件</Filter>
+    </Text>
+    <Text Include="ipdata.txt">
+      <Filter>资源文件</Filter>
+    </Text>
+    <Text Include="ipdiffdata.txt">
       <Filter>资源文件</Filter>
     </Text>
   </ItemGroup>
