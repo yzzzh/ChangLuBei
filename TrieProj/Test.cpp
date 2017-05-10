@@ -8,7 +8,7 @@
 #include "TrieTree.h"
 #include "Routerlist.h"
 #include "DLeftCountingBloomFilter.h"
-
+//#define DEBUG
 using std::unordered_map;
 using std::cout;
 using std::endl;
@@ -47,8 +47,8 @@ void generate_data(int, double);
 
 int main()
 {
-	res.open(path_resultdata);
-	res << "类型 总量 命中率 时间" << endl;
+	//res.open(path_resultdata);
+	//res << "类型 总量 命中率 时间" << endl;
 
 	//建立路由表和树
 	create_hash_list(path_name_data);
@@ -56,23 +56,23 @@ int main()
 
 	cout << "路由表建立完成！" << endl;
 
-	//test(73000, 0.0);
+	test(1000, 1);
 	//test(91000, 0.0);
 	//test(75000, 1.0);
 
 	//生成不同命中率和总量的数据
 	//cout << "------------------命中率：0%------------------"<< endl;
-	for (int num = 1000; num <= 100000; num += 2000)
-	{
-		//total = num;
-		test(num, 0.0);
-	}
+	//for (int num = 1000; num <= 100000; num += 2000)
+	//{
+	//	//total = num;
+	//	test(num, 0.0);
+	//}
 	//cout << "------------------命中率：100%------------------" << endl;
-	for (int num = 1000; num <= 100000; num += 2000)
-	{
-		//total = num;
-		test(num, 1.0);
-	}
+	//for (int num = 1000; num <= 100000; num += 2000)
+	//{
+	//	//total = num;
+	//	test(num, 1.0);
+	//}
 	//cout << "------------------命中率：50%------------------" << endl;
 	//for (int num = 10000; num <= 100000; num += 10000)
 	//{
@@ -80,7 +80,7 @@ int main()
 	//	test(num, 0.5);
 	//}
 
-	res.close();
+	//res.close();
 
 	getchar();
 
@@ -90,6 +90,41 @@ int main()
 void test(int num, double rate)
 {
 	generate_data(num, rate);
+
+	test_trie();
+	test_cbf();
+	test_dleft();
+
+	/*clock_t start, end;
+	Node* node = trietree.searchNode("com");
+	unordered_map<string, string>* list = node->getIpList();
+	unordered_map<int, CountingBloomFilter*>* cbfList = node->getCBFList();
+	unordered_map<int, DLeftCountingBloomFilter*>* dleftList = node->getDLeftList();
+	CountingBloomFilter* cbf = (*cbfList)[4];
+	DLeftCountingBloomFilter* dleft = (*dleftList)[4];
+
+
+	cout << "trie:" << endl;
+	start = clock();
+	for (int i = 0; i < 10000; i++)
+		(*list)["hfgel.ijda.ccbhj.a"];
+	end = clock();
+	cout << end - start << endl;
+
+	cout << "cbf:" << endl;
+	start = clock();
+	for (int i = 0; i < 10000; i++)
+		(*cbf).isContain("hfgel.ijda.ccbhj.a");
+	end = clock();
+	cout << end - start << endl;
+
+	cout << "dleft:" << endl;
+	start = clock();
+	for (int i = 0; i < 10000; i++)
+		(*dleft).isContain("hfgel.ijda.ccbhj.a");
+	end = clock();
+	cout << end - start << endl;*/
+
 
 	//cout << "========================" << endl;
 	//cout << "总量: " << num << endl;
@@ -101,7 +136,7 @@ void test(int num, double rate)
 	//res << "hash_trie_cbf " << num << " " << rate << " " << (test_hash_trie_cbf()+ test_hash_trie_cbf()+test_hash_trie_cbf())/3<< endl;
 
 	//res << "hash " << num << " " << rate << " " << test_hash() << endl;
-	int r = 0;
+	//int r = 0;
 	//r += test_trie();
 	//r += test_trie();
 	//r += test_trie();
@@ -111,11 +146,11 @@ void test(int num, double rate)
 	//r += test_cbf();
 	//res << "cbf " << num << " " << rate << " " << r/3 << endl;
 	
-	r = 0;
-	r += test_dleft();
-	r += test_dleft();
-	r += test_dleft();
-	res << "dleft " << num << " " << rate << " " << r/3 << endl;
+	//r = 0;
+	//r += test_dleft();
+	//r += test_dleft();
+	//r += test_dleft();
+	//res << "dleft " << num << " " << rate << " " << r/3 << endl;
 
 	//cout << "========================" << endl;
 }
@@ -140,7 +175,7 @@ int test_dleft()
 {
 	clock_t start, end;
 
-	//cout << "Dleft : " << endl;
+	cout << "Dleft : " << endl;
 
 	start = clock();
 	//int n = 0, m = 0;
@@ -153,21 +188,24 @@ int test_dleft()
 		Node* node = trietree.searchNode(postfix);
 		if (node != NULL)
 		{
-			//域名退化,1次
-			DLeftCountingBloomFilter* dleft = node->getDLeft();
-			if (!(*dleft).isContain(prefix))
+			//域名退化,
+			unordered_map<int, DLeftCountingBloomFilter*>* dleftList = node->getDLeftList();
+			unordered_map<string, string>* list = node->getIpList();
+			int length = getLength(prefix);
+			while (length > 0)
 			{
-				prefix = shorten(prefix);
-				if ((*dleft).isContain(prefix))
+				int index = length >= 5 ? 5 : length;
+				DLeftCountingBloomFilter* dleft = (*dleftList)[index];
+				if (dleft==NULL || !(*dleft).isContain(prefix))
 				{
-					//n++;
-					//cbf_target--;
-					(*(node->getIpList()))[prefix];
+					prefix = shorten(prefix);
 				}
-			}
-			else
-			{
-				(*(node->getIpList()))[prefix];
+				else
+				{
+					(*list)[prefix];
+					break;
+				}
+				length--;
 			}
 		}
 	}
@@ -175,10 +213,11 @@ int test_dleft()
 	end = clock();
 	//dleft_target = abs(dleft_target);
 
-	//cout << end - start << endl;
+	cout << end - start << endl;
 	//cout << dleft_target << endl;
 	//cout << n << endl;
 	//cout << m << endl << endl;
+
 	return end - start;
 }
 
@@ -186,7 +225,7 @@ int test_cbf()
 {
 	clock_t start, end;
 
-	//cout << "cbf : " << endl;
+	cout << "cbf : " << endl;
 
 	start = clock();
 	//int n = 0, m = 0;
@@ -199,30 +238,32 @@ int test_cbf()
 		Node* node = trietree.searchNode(postfix);
 		if (node != NULL)
 		{
-			CountingBloomFilter* cbf = node->getCBF();
-			//域名退化,1次
-			if (!(*cbf).isContain(prefix))
+			//域名退化,
+			unordered_map<int, CountingBloomFilter*>* cbfList = node->getCBFList();
+			unordered_map<string, string>* list = (node->getIpList());
+			int length = getLength(prefix);
+			while (length > 0)
 			{
-				prefix = shorten(prefix);
-				if ((*cbf).isContain(prefix))
+				int index = length >= 5 ? 5 : length;
+				CountingBloomFilter* cbf = (*cbfList)[index];
+				if (cbf==NULL || !(*cbf).isContain(prefix))
 				{
-					//n++;
-					//cbf_target--;
-					(*(node->getIpList()))[prefix];
+					prefix = shorten(prefix);
 				}
+				else
+				{
+					(*list)[prefix];
+					break;
+				}
+				length--;
 			}
-			else
-			{
-				(*(node->getIpList()))[prefix];
-			}
-			
 		}
 	}
 
 	end = clock();
 	//cbf_target = abs(cbf_target);
 
-	//cout << end - start << endl;
+	cout << end - start << endl;
 	//cout << cbf_target << endl;
 	//cout << n << endl;
 	//cout << m << endl << endl;
@@ -234,7 +275,7 @@ int test_trie()
 {
 	clock_t start, end;
 
-	//cout << "hash_trie : " << endl;
+	cout << "trie : " << endl;
 
 	start = clock();
 	//int n = 0, m = 0;
@@ -247,19 +288,24 @@ int test_trie()
 		Node* node = trietree.searchNode(postfix);
 		if (node != NULL)
 		{
-			if ((*(node->getIpList()))[prefix] == "")
+			int length = getLength(prefix);
+			while (length>0)
 			{
 			//	n++;
 				//trie_target++;
-				prefix = shorten(prefix);
-				(*(node->getIpList()))[prefix];
+				if ((*(node->getIpList()))[prefix] == "")
+					prefix = shorten(prefix);
+				else
+					break;
+				length--;
+				//(*(node->getIpList()))[prefix];
 			}
 		}
 	}
 
 	end = clock();
 	//trie_target = n;
-	//cout << end - start << endl;
+	cout << end - start << endl;
 	//cout << n << endl;
 	//cout << m << endl << endl;
 

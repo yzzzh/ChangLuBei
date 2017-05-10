@@ -25,7 +25,8 @@ private:
 	//        uint16_t cbf_hash_amount = 0;
 	//        BYTE cbf_bit_array[BITNSLOTS(CBF_LENGTH)] = {'\0'};
 	uint8_t cbf_counter_array[CBF_LENGTH] = { 0 };
-	static std::vector<unsigned int> seeds;
+	//static std::vector<unsigned int> seeds;
+	static int CountingBloomFilter::seeds[3];
 	static unsigned int BKDR_hash(unsigned int seed, const std::string &str);
 };
 

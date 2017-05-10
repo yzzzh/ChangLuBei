@@ -25,19 +25,19 @@ public:
 	void addChild(const char&, Node*);
 	void setIpList(const string&, const string&);
 	unordered_map<string, string>* getIpList();
-	DLeftCountingBloomFilter* getDLeft();
-	CountingBloomFilter* getCBF();
-	void addDLeft(const string&);
-	void removeDLeft(const string&);
-	void addCBF(const string&);
-	void removeCBF(const string&);
+	unordered_map<int, DLeftCountingBloomFilter*>* getDLeftList();
+	unordered_map<int, CountingBloomFilter*>* getCBFList();
+	void addDLeft(int,const string&);
+	void removeDLeft(int,const string&);
+	void addCBF(int,const string&);
+	void removeCBF(int,const string&);
 
 private:
 
 	unordered_map<char, Node*> childs;	//子结点表
 	unordered_map<string, string> ipList;
-	DLeftCountingBloomFilter dleft;
-	CountingBloomFilter cbf;
+	unordered_map<int, DLeftCountingBloomFilter*> dleftList;
+	unordered_map<int, CountingBloomFilter*> cbfList;
 };
 
 class TrieTree
@@ -59,5 +59,5 @@ string getPostfix(const string&);
 //获得前缀
 string getPrefix(const string&);
 TrieTree createTrieTree(const unordered_map<string, string>&);
-
+int getLength(const string&);
 #endif 
