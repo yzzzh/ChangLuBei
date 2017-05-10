@@ -47,32 +47,32 @@ void generate_data(int, double);
 
 int main()
 {
-	res.open(path_resultdata);
-	res << "类型 总量 命中率 时间" << endl;
+	//res.open(path_resultdata);
+	//res << "类型 总量 命中率 时间" << endl;
 
 	//建立路由表和树
 	create_hash_list(path_name_data);
 	create_trietree();
 
 	cout << "路由表建立完成！" << endl;
-
+	test(1000, 0.5);
 	//test(73000, 0.0);
 	//test(91000, 0.0);
 	//test(75000, 1.0);
 
 	//生成不同命中率和总量的数据
 	//cout << "------------------命中率：0%------------------"<< endl;
-	for (int num = 1000; num <= 100000; num += 2000)
-	{
+	//for (int num = 1000; num <= 100000; num += 2000)
+	//{
 		//total = num;
-		test(num, 0.0);
-	}
+	//	test(num, 0.0);
+	//}
 	//cout << "------------------命中率：100%------------------" << endl;
-	for (int num = 1000; num <= 100000; num += 2000)
-	{
+	//for (int num = 1000; num <= 100000; num += 2000)
+	//{
 		//total = num;
-		test(num, 1.0);
-	}
+	//	test(num, 1.0);
+	//}
 	//cout << "------------------命中率：50%------------------" << endl;
 	//for (int num = 10000; num <= 100000; num += 10000)
 	//{
@@ -80,7 +80,7 @@ int main()
 	//	test(num, 0.5);
 	//}
 
-	res.close();
+	//res.close();
 
 	getchar();
 
@@ -90,6 +90,9 @@ int main()
 void test(int num, double rate)
 {
 	generate_data(num, rate);
+	test_trie();
+	test_cbf();
+	test_dleft();
 
 	//cout << "========================" << endl;
 	//cout << "总量: " << num << endl;
@@ -101,7 +104,7 @@ void test(int num, double rate)
 	//res << "hash_trie_cbf " << num << " " << rate << " " << (test_hash_trie_cbf()+ test_hash_trie_cbf()+test_hash_trie_cbf())/3<< endl;
 
 	//res << "hash " << num << " " << rate << " " << test_hash() << endl;
-	int r = 0;
+	//int r = 0;
 	//r += test_trie();
 	//r += test_trie();
 	//r += test_trie();
@@ -111,11 +114,11 @@ void test(int num, double rate)
 	//r += test_cbf();
 	//res << "cbf " << num << " " << rate << " " << r/3 << endl;
 	
-	r = 0;
-	r += test_dleft();
-	r += test_dleft();
-	r += test_dleft();
-	res << "dleft " << num << " " << rate << " " << r/3 << endl;
+	//r = 0;
+	//r += test_dleft();
+	//r += test_dleft();
+	//r += test_dleft();
+	//res << "dleft " << num << " " << rate << " " << r/3 << endl;
 
 	//cout << "========================" << endl;
 }
@@ -140,7 +143,7 @@ int test_dleft()
 {
 	clock_t start, end;
 
-	//cout << "Dleft : " << endl;
+	cout << "Dleft : " << endl;
 
 	start = clock();
 	//int n = 0, m = 0;
@@ -153,29 +156,39 @@ int test_dleft()
 		Node* node = trietree.searchNode(postfix);
 		if (node != NULL)
 		{
-			//域名退化,1次
-			DLeftCountingBloomFilter* dleft = node->getDLeft();
-			if (!(*dleft).isContain(prefix))
-			{
-				prefix = shorten(prefix);
-				if ((*dleft).isContain(prefix))
+			unordered_map<int, DLeftCountingBloomFilter>* dleftList = node->getDLeftList();
+			//unordered_map<string, string> ipList = *(node->getIpList());
+			int length = getLength(prefix);
+
+			while (length > 0) {
+				int index = 0;
+				if (length >= 5)
 				{
-					//n++;
-					//cbf_target--;
-					(*(node->getIpList()))[prefix];
+					index = 5;
 				}
-			}
-			else
-			{
-				(*(node->getIpList()))[prefix];
+				else
+				{
+					index = length;
+				}
+				DLeftCountingBloomFilter dleft = (*dleftList)[index];
+				//域名退化
+				if (!dleft.isContain(prefix))
+				{
+					prefix = shorten(prefix);
+				}
+				else
+				{
+					(*(node->getIpList()))[prefix];
+					break;
+				}
+				length--;
 			}
 		}
 	}
-
 	end = clock();
 	//dleft_target = abs(dleft_target);
 
-	//cout << end - start << endl;
+	cout << end - start << endl;
 	//cout << dleft_target << endl;
 	//cout << n << endl;
 	//cout << m << endl << endl;
@@ -186,12 +199,12 @@ int test_cbf()
 {
 	clock_t start, end;
 
-	//cout << "cbf : " << endl;
+	cout << "cbf : " << endl;
 
 	start = clock();
 	//int n = 0, m = 0;
 	//cbf_target = trie_target;
-	for (int i = 0; i < (int)urls.size(); i++)
+	for (int i = 0; i < (int) urls.size(); i++)
 	{
 		//m++;
 		string prefix = prefixs[i];
@@ -199,30 +212,58 @@ int test_cbf()
 		Node* node = trietree.searchNode(postfix);
 		if (node != NULL)
 		{
-			CountingBloomFilter* cbf = node->getCBF();
-			//域名退化,1次
-			if (!(*cbf).isContain(prefix))
-			{
-				prefix = shorten(prefix);
-				if ((*cbf).isContain(prefix))
-				{
-					//n++;
-					//cbf_target--;
-					(*(node->getIpList()))[prefix];
-				}
-			}
-			else
-			{
-				(*(node->getIpList()))[prefix];
-			}
+			unordered_map<int , CountingBloomFilter>* cbfList = node->getCBFList();
+			//unordered_map<string, string> list = *(node->getIpList());
+			int length = getLength(prefix);
 			
+			while (length > 0) {
+				int index = 0;
+				if (length >= 5)
+				{
+					index = 5;
+				}
+				else
+				{
+					index = length;
+				}
+				CountingBloomFilter cbf = (*cbfList)[index];
+				//域名退化
+				if (!cbf.isContain(prefix))
+				{
+					prefix = shorten(prefix);
+				}
+				else
+				{
+					(*(node->getIpList()))[prefix];
+					break;
+				}
+				length--;
+			}
 		}
 	}
-
 	end = clock();
+
+	/*clock_t start1, end1;
+	Node* node = trietree.searchNode("com");
+	unordered_map<int, CountingBloomFilter>* cbfList = node->getCBFList();
+	CountingBloomFilter cbf = (*cbfList)[1];
+
+	start1 = clock();
+	for (int i = 0; i < 1000; i++)
+		cbf.isContain("123");
+	end1 = clock();
+	cout << "cbf: " << end1 - start1 << endl;
+
+	unordered_map<string, string> list = *(node->getIpList());
+	start1 = clock();
+	for (int i = 0; i < 1000; i++)
+		list["123"];
+	end1 = clock();
+	cout << "hash: " << end1 - start1 << endl;*/
+
 	//cbf_target = abs(cbf_target);
 
-	//cout << end - start << endl;
+	cout << end - start << endl;
 	//cout << cbf_target << endl;
 	//cout << n << endl;
 	//cout << m << endl << endl;
@@ -234,7 +275,7 @@ int test_trie()
 {
 	clock_t start, end;
 
-	//cout << "hash_trie : " << endl;
+	cout << "hash_trie : " << endl;
 
 	start = clock();
 	//int n = 0, m = 0;
@@ -247,19 +288,19 @@ int test_trie()
 		Node* node = trietree.searchNode(postfix);
 		if (node != NULL)
 		{
-			if ((*(node->getIpList()))[prefix] == "")
+			while ((*(node->getIpList()))[prefix] != "")
 			{
 			//	n++;
 				//trie_target++;
 				prefix = shorten(prefix);
-				(*(node->getIpList()))[prefix];
+				//(*(node->getIpList()))[prefix];
 			}
 		}
 	}
 
 	end = clock();
 	//trie_target = n;
-	//cout << end - start << endl;
+	cout << end - start << endl;
 	//cout << n << endl;
 	//cout << m << endl << endl;
 

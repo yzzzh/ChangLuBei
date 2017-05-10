@@ -12,7 +12,9 @@ using std::find_if;
 using std::cout;
 using std::endl;
 
-Node::Node() {}
+Node::Node() 
+{
+}
 
 Node::~Node() {}
 
@@ -45,33 +47,33 @@ unordered_map<string, string>* Node::getIpList()
 }
 
 
-DLeftCountingBloomFilter* Node::getDLeft()
+unordered_map<int, DLeftCountingBloomFilter>* Node::getDLeftList()
 {
-	return &dleft;
+	return &dleftList;
 }
-CountingBloomFilter* Node::getCBF()
+unordered_map<int, CountingBloomFilter>* Node::getCBFList()
 {
-	return &cbf;
-}
-
-void Node::addDLeft(const string& str)
-{
-	dleft.add(str);
+	return &cbfList;
 }
 
-void Node::removeDLeft(const string& str)
+void Node::addDLeft(int i,const string& str)
 {
-	dleft.remove(str);
+	dleftList[i].add(str);
 }
 
-void Node::addCBF(const string& str)
+void Node::removeDLeft(int i ,const string& str)
 {
-	cbf.add(str);
+	dleftList[i].remove(str);
 }
 
-void Node::removeCBF(const string& str)
+void Node::addCBF(int i,const string& str)
 {
-	cbf.remove(str);
+	cbfList[i].add(str);
+}
+
+void Node::removeCBF(int i,const string& str)
+{
+	cbfList[i].remove(str);
 }
 
 TrieTree::TrieTree() {}
@@ -130,9 +132,30 @@ TrieTree createTrieTree(const unordered_map<string, string>& routerlist)
 			}
 			temp1 = temp2;
 		}
+		int length = getLength(prefix);
 		temp1->setIpList(prefix, mit->second);
-		temp1->addDLeft(prefix);
-		temp1->addCBF(prefix);
+		if (length < 5) {
+			temp1->addDLeft(length,prefix);
+			temp1->addCBF(length,prefix);
+		}
+		else
+		{
+			temp1->addDLeft(5, prefix);
+			temp1->addCBF(5, prefix);
+		}
 	}
 	return TrieTree(root);
 }
+
+int getLength(const string& s)
+{
+	int sum = 0;
+	char ch = '.';
+	for (char c : s)
+	{
+		if (c == ch)
+			sum++;
+	}
+	return ++sum;
+}
+
